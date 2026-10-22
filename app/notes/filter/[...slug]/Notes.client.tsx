@@ -1,21 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchNotes } from '../../lib/api';
-import SearchBox from '../../components/SearchBox/SearchBox';
-import NoteList from '../../components/NoteList/NoteList';
-import Pagination from '../../components/Pagination/Pagination';
-import Modal from '../../components/Modal/Modal';
-import NoteForm from '../../components/NoteForm/NoteForm';
+import { fetchNotes } from '../../../../lib/api';
+import SearchBox from '../../../../components/SearchBox/SearchBox';
+import NoteList from '../../../../components/NoteList/NoteList';
+import Pagination from '../../../../components/Pagination/Pagination';
+import Modal from '../../../../components/Modal/Modal';
+import NoteForm from '../../../../components/NoteForm/NoteForm';
 import css from './notes.module.css';
 
-const NotesClient = () => {
+const NotesClient = ({ tag }: { tag: string }) => {
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    setPage(1);
+  }, [tag]);
 
   const handleSearchDebounce = useDebouncedCallback((value: string) => {
     setDebouncedSearch(value);
@@ -28,8 +32,8 @@ const NotesClient = () => {
   };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['notes', page, debouncedSearch],
-    queryFn: () => fetchNotes(page, debouncedSearch),
+    queryKey: ['notes', page, debouncedSearch, tag],
+    queryFn: () => fetchNotes(page, debouncedSearch, tag),
     refetchOnMount: false,
     placeholderData: keepPreviousData,
   });
@@ -40,11 +44,13 @@ const NotesClient = () => {
         <SearchBox value={search} onChange={handleSearchChange} />
 
         {data && data.totalPages > 1 && (
-          <Pagination
-            pageCount={data.totalPages}
-            currentPage={page}
-            onChange={(newPage: number) => setPage(newPage)}
-          />
+          <div>
+            <Pagination
+              pageCount={data.totalPages}
+              currentPage={page}
+              onChange={(newPage: number) => setPage(newPage)}
+            />
+          </div>
         )}
 
         <button className={css.button} onClick={() => setIsModalOpen(true)}>

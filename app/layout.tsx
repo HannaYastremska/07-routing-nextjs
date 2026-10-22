@@ -9,15 +9,20 @@ export const metadata: Metadata = {
   description: 'A simple and efficient application designed for managing personal notes.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+interface RootLayoutProps {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}
+
+export default function RootLayout({ children, modal }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <TanStackProvider>
           <Header />
-          {/* Додаємо suppressHydrationWarning сюди */}
-          <div id="root-layout" suppressHydrationWarning>
+          <div id="root-layout">
             {children}
+            {modal}
           </div>
           <Footer />
         </TanStackProvider>

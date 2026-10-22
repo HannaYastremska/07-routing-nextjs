@@ -24,12 +24,19 @@ export interface CreateNoteDto {
   tag: NoteTag;
 }
 
-export const fetchNotes = async (page: number, search: string): Promise<FetchNotesResponse> => {
+export const fetchNotes = async (
+  page: number,
+  search: string,
+  tag?: string
+): Promise<FetchNotesResponse> => {
+  const appliedTag = tag && tag !== 'all' ? tag : undefined;
+
   const response = await notehubApi.get<FetchNotesResponse>('/notes', {
     params: {
       page,
       perPage: 12,
       search: search || undefined,
+      tag: appliedTag,
     },
   });
   return response.data;

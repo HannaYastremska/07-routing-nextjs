@@ -28,6 +28,13 @@ const NoteList = ({ notes }: NoteListProps) => {
           <p className={css.content}>{note.content}</p>
 
           {}
+          <span
+            suppressHydrationWarning
+            style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '8px' }}
+          >
+            {note.createdAt}
+          </span>
+
           <div className={css.footer} suppressHydrationWarning>
             <span className={css.tag}>{note.tag}</span>
 
